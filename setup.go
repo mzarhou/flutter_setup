@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"log"
@@ -21,9 +22,20 @@ type Item struct {
 func main() {
 	log.Printf("Start")
 	start := time.Now()
-	download_path := "/Users/mzarhou/goinfre/temp_download_32234234223/"
-	devtools_path := "/Users/mzarhou/goinfre/devtools"
-	apps_path := "/Users/mzarhou/goinfre/apps"
+
+	// get username
+	cmd := exec.Command("whoami")
+	var outb bytes.Buffer
+	cmd.Stdout = &outb
+	err := cmd.Run()
+	if err != nil {
+		panic(err)
+	}
+	username := outb.String()
+	username = username[:len(username)-1]
+	download_path := "/Users/" + username + "/goinfre/temp_download_32234234223/"
+	devtools_path := "/Users/" + username + "/goinfre/devtools"
+	apps_path := "/Users/" + username + "/goinfre/apps"
 
 	items := []Item{
 		{
@@ -78,7 +90,7 @@ func main() {
 	wg.Wait()
 
 	// remove download folder
-	cmd := exec.Command("bash", "-c", "rm -rf "+download_path)
+	cmd = exec.Command("bash", "-c", "rm -rf "+download_path)
 	cmd.Run()
 
 	elapsed := time.Since(start)
@@ -95,7 +107,7 @@ func work(item Item, download_path string, apps_path string) {
 	fmt.Println("Downloaded: " + item.url)
 	// extract
 	command := "tar -xvf " + download_path + item.name
-	fmt.Println(command)
+	fmt.Println("extracting " + item.name + "...")
 	if item.name != "android-studio.dmg" {
 		cmd := exec.Command("bash", "-c", command)
 		if err := cmd.Run(); err != nil {
@@ -107,7 +119,6 @@ func work(item Item, download_path string, apps_path string) {
 	if item.name != "android-studio.dmg" {
 		command = "mv " + item.target_name + "* " + item.target_name
 	}
-	fmt.Println(command)
 	cmd := exec.Command("bash", "-c", command)
 	cmd.Run()
 }
