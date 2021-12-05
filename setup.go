@@ -34,8 +34,9 @@ func main() {
 	username := outb.String()
 	username = username[:len(username)-1]
 	download_path := "/Users/" + username + "/goinfre/temp_download_32234234223/"
-	devtools_path := "/Users/" + username + "/goinfre/devtools"
-	apps_path := "/Users/" + username + "/goinfre/apps"
+	devtools_path := "/Users/" + username + "/goinfre/devtools/"
+	apps_path := "/Users/" + username + "/goinfre/apps/"
+	sdk_path := devtools_path + "Android/sdk"
 
 	items := []Item{
 		{
@@ -63,6 +64,7 @@ func main() {
 			url:         "https://redirector.gvt1.com/edgedl/android/studio/install/2020.3.1.25/android-studio-2020.3.1.25-mac.dmg",
 		},
 	}
+
 	if err := makeDir(download_path); err != nil {
 		panic(err)
 	}
@@ -93,6 +95,10 @@ func main() {
 	cmd = exec.Command("bash", "-c", "rm -rf "+download_path)
 	cmd.Run()
 
+	// create sdk folder
+	cmd = exec.Command("bash", "-c", "mkdir -p "+sdk_path)
+	cmd.Run()
+
 	elapsed := time.Since(start)
 	log.Printf("task took %s", elapsed)
 }
@@ -106,20 +112,19 @@ func work(item Item, download_path string, apps_path string) {
 	}
 	fmt.Println("Downloaded: " + item.url)
 	// extract
-	command := "tar -xvf " + download_path + item.name
 	fmt.Println("extracting " + item.name + "...")
-	if item.name != "android-studio.dmg" {
-		cmd := exec.Command("bash", "-c", command)
-		if err := cmd.Run(); err != nil {
-			panic(err)
-		}
+	cmd := exec.Command("bash", "-c", item.command)
+	if err := cmd.Run(); err != nil {
+		panic(err)
 	}
 	// rename
-	command = "cp -R /Volumes/Android\\ Studio\\ -\\ Arctic\\ Fox\\ \\|\\ 2020.3.1\\ Patch\\ 3/Android\\ Studio.app " + apps_path
+	var command string
 	if item.name != "android-studio.dmg" {
 		command = "mv " + item.target_name + "* " + item.target_name
+	} else {
+		command = "cp -R /Volumes/Android\\ Studio\\ -\\ Arctic\\ Fox\\ \\|\\ 2020.3.1\\ Patch\\ 3/Android\\ Studio.app " + apps_path
 	}
-	cmd := exec.Command("bash", "-c", command)
+	cmd = exec.Command("bash", "-c", command)
 	cmd.Run()
 }
 
