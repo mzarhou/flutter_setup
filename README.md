@@ -26,3 +26,9 @@ export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/b
 # java
 export PATH=$PATH:$JAVA_HOME/bin
 ```
+
+android sdk path:
+```
+/Users/'your user name'/goinfre/devtools/Android/sdk
+```
+download command line tools + android apis
