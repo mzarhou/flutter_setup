@@ -1,6 +1,13 @@
-# android_env_setup_1337
+# flutter setup
 
-add this lines to .zshenv (if not exist create it)
+## usage
+```zsh
+curl -O https://github.com/mzarhou/flutter_setup/releases/download/v0.0.1/flutter_setup
+chmod +x flutter_setup
+./flutter_setup
+```
+
+add these lines to .zshenv (if not exist create it)
 ```zsh
 # custom paths
 export DEV_TOOLS=/Users/$(whoami)/goinfre/devtools
